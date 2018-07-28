@@ -60,30 +60,23 @@ class AccountBalanceBoard extends Component {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell numeric>Calories</TableCell>
-              <TableCell numeric>Fat (g)</TableCell>
-              <TableCell numeric>Carbs (g)</TableCell>
-              <TableCell numeric>Protein (g)</TableCell>
+              <TableCell>Address</TableCell>
+              <TableCell>Balance</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {this.props.accounts.map((account, i) => (
               <TableRow key={i}>
-                <TableCell component="th" scope="row">
-                  {account}
+                <TableCell>
+                  {account.address}
                 </TableCell>
-                <TableCell numeric>ii</TableCell>
-                <TableCell numeric>あああ</TableCell>
-                <TableCell numeric>いいい</TableCell>
-                <TableCell numeric>ううう</TableCell>
+                <TableCell>{account.balance}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </Paper>
     )
-
   }
 }
 

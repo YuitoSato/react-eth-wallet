@@ -1,4 +1,4 @@
-export const LOAD_ACCOUNTS= 'LOAD_ACCOUNTS';
+export const LOAD_ACCOUNTS = 'LOAD_ACCOUNTS';
 export const FETCH_ACCOUNTS_SUCCESS = 'FETCH_ACCOUNTS_SUCCESS';
 export const FETCH_ACCOUNTS_ERROR = 'FETCH_ACCOUNTS_ERROR';
 
@@ -20,12 +20,26 @@ export const fetchAccountsError = status => ({
 export const fetchAccounts = web3 => {
   return (dispatch) => {
     dispatch(loadAccounts(true));
-    web3.eth.getAccounts()
+    const promise = web3.eth.getAccounts();
+    const result = promise.then(addresses => {
+      const promises = addresses.map(address => {
+        return web3.eth.getBalance(address)
+          .then((balance) => {
+            return {
+              address: address,
+              balance: balance
+            }
+          });
+      });
+      return Promise.all(promises);
+    });
+    result
       .then((accounts) => {
         dispatch(loadAccounts(false));
         dispatch(fetchAccountsSuccess(accounts));
         return accounts;
       })
       .catch(() => dispatch(fetchAccountsError(true)));
+    return result;
   }
 };
