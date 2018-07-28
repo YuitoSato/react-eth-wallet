@@ -7,13 +7,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import withStyles from '@material-ui/core/es/styles/withStyles';
-import Web3 from 'web3';
 import { fetchAccounts } from '../actions/accountAction';
 import { connect } from 'react-redux';
 
 const styles = theme => ({
   root: {
-    width: '100%',
+    marginLeft: '20px',
+    width: '700px',
     marginTop: theme.spacing.unit * 3,
     overflowX: 'auto',
   },
@@ -23,21 +23,8 @@ const styles = theme => ({
 });
 
 class AccountBalanceBoard extends Component {
-  constructor(props) {
-    super(props);
-    this.web3 = new Web3();
-    this.web3.setProvider(new this.web3.providers.HttpProvider("http://localhost:8545"));
-
-    // NOTE yuito
-    // https://github.com/coopermaruyama/react-web3/issues/25
-    // windowのweb3を塗り替える。
-    if (window.web3) {
-      window.web3 = this.web3;
-    }
-  }
-
   componentDidMount() {
-    this.props.fetchAccounts(this.web3);
+    this.props.fetchAccounts(this.props.web3);
   }
 
   render() {
@@ -80,8 +67,8 @@ class AccountBalanceBoard extends Component {
   }
 }
 
-
 AccountBalanceBoard.propTypes = {
+  web3: PropTypes.any.isRequired,
   fetchAccounts: PropTypes.func.isRequired,
   accounts: PropTypes.array.isRequired,
   hasError: PropTypes.bool.isRequired,
