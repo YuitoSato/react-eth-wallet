@@ -5,11 +5,13 @@
   "dependencies": {
     "@material-ui/core": "^1.4.1",
     "@material-ui/icons": "^2.0.0",
+    "ethereumjs-testrpc": "^6.0.3",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-redux": "^5.0.7",
     "react-scripts": "1.1.4",
-    "web3": "^1.0.0-beta.35",
+    "web3": "^0.20.1",
     "websocket": "^1.0.26"
   },
   "scripts": {
