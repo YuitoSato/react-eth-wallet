@@ -20,26 +20,24 @@ export const fetchAccountsError = status => ({
 export const fetchAccounts = web3 => {
   return (dispatch) => {
     dispatch(loadAccounts(true));
-    const promise = web3.eth.getAccounts();
-    const result = promise.then(addresses => {
-      const promises = addresses.map(address => {
-        return web3.eth.getBalance(address)
-          .then((balance) => {
-            return {
-              address: address,
-              balance: balance
-            }
-          });
-      });
-      return Promise.all(promises);
-    });
-    result
-      .then((accounts) => {
+    return web3.eth.getAccounts()
+      .then(addresses => {
+        const promises = addresses.map(address => {
+          return web3.eth.getBalance(address)
+            .then((balance) => {
+              return {
+                address: address,
+                balance: balance
+              }
+            });
+        });
+        return Promise.all(promises);
+      })
+      .then(accounts => {
         dispatch(loadAccounts(false));
         dispatch(fetchAccountsSuccess(accounts));
         return accounts;
       })
       .catch(() => dispatch(fetchAccountsError(true)));
-    return result;
   }
 };
