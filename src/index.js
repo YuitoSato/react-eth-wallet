@@ -1,8 +1,15 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import { render } from 'react-dom';
+import configureStore from './store/configureStore';
+import * as redux from 'react-redux';
+import AccountBalanceBoard from './components/AccountBalanceBoard';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+const store = configureStore();
+
+render(
+  <redux.Provider store={store}>
+    <AccountBalanceBoard />
+  </redux.Provider>,
+  document.getElementById('root')
+);
