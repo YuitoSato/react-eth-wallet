@@ -13,6 +13,7 @@ import MenuItem from '@material-ui/core/es/MenuItem/MenuItem';
 import { fetchAccounts } from '../actions/accountAction';
 import { connect } from 'react-redux';
 import TextField from '@material-ui/core/es/TextField/TextField';
+import { sendToken } from '../actions/sendTokenAction';
 
 const styles = {
   card: {
@@ -37,12 +38,13 @@ class SendTokenForm extends Component {
     this.state = {
       fromAddress: '',
       toAddress: '',
-      amount: 0
+      amount: 0,
+      password: '',
     };
   }
 
   componentDidMount() {
-    const {fetchAccounts, web3, accounts} = this.props;
+    const {fetchAccounts, web3 } = this.props;
     fetchAccounts(web3);
   }
 
@@ -52,26 +54,35 @@ class SendTokenForm extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    console.log(this.state.amount);
+    const { toAddress, fromAddress, amount, password } = this.state;
+    console.log(password);
+    const { web3, sendToken } = this.props;
+    sendToken(web3, toAddress, fromAddress, amount, password);
+
+    this.setState({
+      fromAddress: '',
+      toAddress: '',
+      amount: 0,
+      password: ''
+    });
   }
 
   render() {
-    const {classes, hasError, isLoading, accounts} = this.props;
+    const {classes, loadAccountsError, isLoading, accounts, isSending} = this.props;
 
-    if (hasError) {
+    if (loadAccountsError) {
       return (<p>
         error
       </p>);
     }
 
-    if (isLoading) {
+    if (isLoading || isSending) {
       return (<p>
         loading...
       </p>)
     }
 
     return (
-
       <div>
         <Card className={classes.card}>
           <form className={classes.root} autoComplete="off" onSubmit={this.handleSubmit.bind(this)}>
@@ -130,7 +141,20 @@ class SendTokenForm extends Component {
                   margin="normal"
                 />
               </FormControl>
-
+              <br />
+              <FormControl className={classes.formControl}>
+                <TextField
+                  id="password"
+                  label="password"
+                  value={this.state.password}
+                  onChange={this.handleChange}
+                  type="password"
+                  inputProps={{
+                    name: 'password',
+                  }}
+                  margin="normal"
+                />
+              </FormControl>
             </CardContent>
             <CardActions>
               <Button
@@ -138,7 +162,6 @@ class SendTokenForm extends Component {
               >
                 SUBMIT
               </Button>
-              {/*<input size="small" type="submit" value="SUBMIT"/>*/}
             </CardActions>
           </form>
 
@@ -152,18 +175,26 @@ SendTokenForm.propTypes = {
   web3: PropTypes.any.isRequired,
   fetchAccounts: PropTypes.func.isRequired,
   accounts: PropTypes.array.isRequired,
-  hasError: PropTypes.bool.isRequired,
-  isLoading: PropTypes.bool.isRequired
+  loadAccountsError: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  isSending: PropTypes.bool.isRequired,
+  sendTokenError: PropTypes.bool.isRequired,
+  sendToken: PropTypes.func.isRequired,
+  lastTransactionHash: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => ({
   accounts: state.accounts,
-  hasError: state.fetchAccountsError,
-  isLoading: state.loadAccounts
+  loadAccountsError: state.fetchAccountsError,
+  isLoading: state.loadAccounts,
+  isSending: state.sendingToken,
+  sendTokenError: state.sendFailure,
+  lastTransactionHash: state.lastTransactionHash
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchAccounts: (web3) => dispatch(fetchAccounts(web3))
+  fetchAccounts: (web3) => dispatch(fetchAccounts(web3)),
+  sendToken: (web3, to, from, amount, password) => dispatch(sendToken(web3, to, from, amount, password))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SendTokenForm));
